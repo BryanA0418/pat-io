@@ -2,6 +2,7 @@
 const express = require("express");
 const responses = express.Router();
 const { getAllResponses, getResponse } = require("../queries/response.js");
+
 responses.get("/", async (req, res) => {
   const allResponses = await getAllResponses();
   if (allResponses[0]) {
@@ -10,6 +11,7 @@ responses.get("/", async (req, res) => {
     res.status(500).json({ error: "server error" });
   }
 });
+
 responses.get("/:id", async (req, res) => {
   const { id } = req.params;
   const response = await getResponse(id);
