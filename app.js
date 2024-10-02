@@ -18,7 +18,7 @@ app.use(express.json());
 // ROUTES
 app.get("/", async (req, res) => {
   try {
-    // const aiResponse = await handleRootRequest(); // Call the new async function
+    const aiResponse = await handleRootRequest(); // Call the new async function
     res.send(`Welcome to Pat.io App<br><br>AI Response: ${aiResponse}`);
   } catch (error) {
     res.status(500).send("Error fetching AI response");
