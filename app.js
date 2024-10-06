@@ -30,7 +30,7 @@ const corsOptions = {
   optionsSuccessStatus: 204, // Respond successfully to preflight requests
 };
 
-app.use(cors(corsOptions));
+app.use((cors));
 app.use(express.json());
 // Language code mapping for Google Translation API
 const languageNames = {
