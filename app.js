@@ -22,15 +22,7 @@ const ttsClient = new textToSpeech.TextToSpeechClient(); // Google Text-to-Speec
 const app = express();
 
 // MIDDLEWARE
-const corsOptions = {
-  origin: 'http://localhost:5173', // Specify the frontend origin
-  methods: ['GET', 'POST', 'OPTIONS'], // Allow these methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
-  credentials: true, // If you're using cookies or authorization headers
-  optionsSuccessStatus: 204, // Respond successfully to preflight requests
-};
-
-app.use((cors));
+app.use(cors());
 app.use(express.json());
 // Language code mapping for Google Translation API
 const languageNames = {
