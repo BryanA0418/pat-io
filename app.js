@@ -24,6 +24,7 @@ const app = express();
 // MIDDLEWARE
 app.use(cors());
 app.use(express.json());
+
 // Language code mapping for Google Translation API
 const languageNames = {
   "en-US": "English",
@@ -149,6 +150,40 @@ function generatePrompt(userInteractions) {
   }, and I am looking for ${request_info || "some information"}.`;
 }
 
+// Function to get location info from OpenAI
+
+async function getLocationBasedCompletion(prompt, userLanguage) {
+  try {
+    // Ensure we have the nearest office information
+    if (!prompt) {
+      throw new Error("Nearest office information is required.");
+    }
+
+    // Use the language name or fallback to the provided language code
+    const languageName = languageNames[userLanguage] || userLanguage;
+
+    console.log("Generated prompt for AI:", prompt);
+
+    // Call OpenAI API to get the chat completion based on the prompt
+    const chatCompletion = await openAIClient.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant. Your tone should be helpful, courteous, and friendly. Respond in ${languageName}. Provide information about Social Security offices.`,
+        },
+        { role: "user", content: prompt },
+      ],
+    });
+
+    // Return the generated response from the AI
+    return chatCompletion.choices[0].message.content;
+  } catch (error) {
+    console.error("Error in getLocationBasedCompletion:", error);
+    throw error; // Rethrow the error so it can be handled by the caller
+  }
+}
+
 // Function to get chat completion from OpenAI
 async function getChatCompletion(
   userMessage,
@@ -158,8 +193,7 @@ async function getChatCompletion(
   try {
     let prompt;
     let documentsNeeded = [];
-
-    if (userInteractions.buttonClicks) {
+    if (userInteractions.buttonClicks.subject) {
       const visaType = userInteractions.buttonClicks.visa_type;
       try {
         documentsNeeded = await getDocumentsFromDatabase(visaType);
@@ -175,12 +209,15 @@ async function getChatCompletion(
     // Use the expanded languageNames object, fallback to the language code if not found
     const languageName = languageNames[userLanguage] || userLanguage;
 
+    console.log("Prompt:Step 1", prompt);
     const chatCompletion = await openAIClient.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-          content: `You are an AI assistant, your tone should be courteous, friendly, and welcoming, and you must respond in ${languageName}.${documentsNeeded
+          content: `You are an AI assistant, your tone should be courteous, friendly, and welcoming, and you must respond in ${languageName}. If the user is asking for ${
+            userInteractions.buttonClicks.visa_type
+          }, response back with the follow as a list: ${documentsNeeded
             .map((doc) => `${doc.name}: ${doc.description}`)
             .join(
               ", "
@@ -196,7 +233,136 @@ async function getChatCompletion(
     throw error;
   }
 }
+// Route to handle ssa office location
+app.post("/api/location", async (req, res) => {
+  try {
+    const { zipCode, userLanguage, targetLanguage } = req.body;
+    console.log("Received zip code:", zipCode);
 
+    if (!zipCode) {
+      return res.status(400).json({ error: "Zip code is required." });
+    }
+
+    // 1. Get coordinates from the provided zip code using Zippopotam API
+    const geocodingResponse = await fetch(
+      `https://api.zippopotam.us/us/${zipCode}`
+    );
+
+    if (!geocodingResponse.ok) {
+      throw new Error(`Geocoding API error: ${geocodingResponse.status}`);
+    }
+
+    const locationData = await geocodingResponse.json();
+
+    if (!locationData.places || locationData.places.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "Location not found for the provided zip code." });
+    }
+
+    const place = locationData.places[0];
+    const userLat = parseFloat(place["latitude"]);
+    const userLon = parseFloat(place["longitude"]);
+
+    // 2. Query the database for the nearest office using Haversine formula
+    const nearestOfficeQuery = `
+SELECT 
+    id, 
+    office_code, 
+    office_name AS name, 
+    address_line_1, 
+    address_line_2, 
+    address_line_3, 
+    city, 
+    state, 
+    zip_code AS zipcode, 
+    phone, 
+    fax, 
+    monday_open_time, 
+    monday_close_time, 
+    tuesday_open_time, 
+    tuesday_close_time, 
+    wednesday_open_time, 
+    wednesday_close_time, 
+    thursday_open_time, 
+    thursday_close_time, 
+    friday_open_time, 
+    friday_close_time, 
+    latitude, 
+    longitude, 
+    (6371 * acos(cos(radians($1)) * cos(radians(latitude)) * cos(radians(longitude) - radians($2)) + sin(radians($1)) * sin(radians(latitude)))) AS distance 
+FROM office_open_close_times 
+ORDER BY distance 
+LIMIT 1;
+    `;
+
+    const nearestOffice = await db.query(nearestOfficeQuery, [
+      userLat,
+      userLon,
+    ]);
+
+    console.log("Nearest Office Query Result:", nearestOffice);
+
+    // 4. Generate AI response (assumed to use OpenAI or similar service)
+    const prompt = `You are an AI assistant. Your tone should be courteous, friendly, and welcoming. When a user provides a zip code, respond with the following information:
+
+The nearest Social Security Administration office to the provided zip code ${zipCode} is located in ${
+      nearestOffice[0].city
+    }, ${nearestOffice[0].state}, approximately ${
+      Math.round(nearestOffice[0].distance * 10) / 10
+    } kilometers away.
+
+The office is named ${nearestOffice[0].name} and is located at:
+${nearestOffice[0].address_line_1}, ${
+      nearestOffice[0].address_line_2
+        ? nearestOffice[0].address_line_2 + ","
+        : ""
+    } ${
+      nearestOffice[0].address_line_3
+        ? nearestOffice[0].address_line_3 + ","
+        : ""
+    } ${nearestOffice[0].city}, ${nearestOffice[0].state}, ${
+      nearestOffice[0].zipcode
+    }.
+
+You can contact the office via phone at ${nearestOffice[0].phone} or fax at ${
+      nearestOffice[0].fax
+    }.
+
+Office hours:
+- Monday: ${nearestOffice[0].monday_open_time} to ${
+      nearestOffice[0].monday_close_time
+    }
+- Tuesday: ${nearestOffice[0].tuesday_open_time} to ${
+      nearestOffice[0].tuesday_close_time
+    }
+- Wednesday: ${nearestOffice[0].wednesday_open_time} to ${
+      nearestOffice[0].wednesday_close_time
+    }
+- Thursday: ${nearestOffice[0].thursday_open_time} to ${
+      nearestOffice[0].thursday_close_time
+    }
+- Friday: ${nearestOffice[0].friday_open_time} to ${
+      nearestOffice[0].friday_close_time
+    }
+
+Please feel free to reach out if you need more information.`;
+    const aiResponse = await getLocationBasedCompletion(prompt, targetLanguage);
+
+    // 5. Send the response to the client
+    res.json({
+      textResponse: aiResponse,
+    });
+  } catch (error) {
+    console.error("Error processing location request:", error);
+    res.status(500).json({
+      error: "An error occurred while processing your location request.",
+      details: error.message,
+    });
+  }
+});
+
+// Route to handle the chat request
 app.post("/api/chat", async (req, res) => {
   try {
     const {

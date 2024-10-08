@@ -35,3 +35,30 @@ CREATE TABLE visa_requirements (
     id_requirements_id INTEGER REFERENCES id_requirements(id),
     PRIMARY KEY (visa_status_id, id_requirements_id) -- Composite primary key
 );
+
+-- Create the office_open_close_times table
+CREATE TABLE office_open_close_times (
+    id SERIAL PRIMARY KEY,
+    office_code VARCHAR(10),
+    office_name VARCHAR(100),
+    address_line_1 VARCHAR(255),
+    address_line_2 VARCHAR(255),
+    address_line_3 VARCHAR(255),
+    city VARCHAR(100),
+    state CHAR(2),
+    zip_code VARCHAR(10),
+    phone VARCHAR(20),
+    fax VARCHAR(20),
+    monday_open_time VARCHAR(10),
+    monday_close_time VARCHAR(10),
+    tuesday_open_time VARCHAR(10),
+    tuesday_close_time VARCHAR(10),
+    wednesday_open_time VARCHAR(10),
+    wednesday_close_time VARCHAR(10),
+    thursday_open_time VARCHAR(10),
+    thursday_close_time VARCHAR(10),
+    friday_open_time VARCHAR(10),
+    friday_close_time VARCHAR(10),
+    latitude DECIMAL(10, 8) NOT NULL,
+    longitude DECIMAL(11, 8) NOT NULL
+);
