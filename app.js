@@ -49,6 +49,8 @@ const languageNames = {
   "ja-JP": "Japanese",
   "vi-VN": "Vietnamese",
   "ar-SA": "Arabic",
+  "ur-PK": "Urdu",
+  "tl-PH": "Tagalog",
 };
 
 // Helper function: Speech-to-Text (Google Cloud Speech-to-Text API)
@@ -166,11 +168,11 @@ async function getLocationBasedCompletion(prompt, userLanguage) {
 
     // Call OpenAI API to get the chat completion based on the prompt
     const chatCompletion = await openAIClient.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "ft:gpt-4o-mini-2024-07-18:personal:patio-v2:AHJSlWe4",
       messages: [
         {
           role: "system",
-          content: `You are an AI assistant. Your tone should be helpful, courteous, and friendly. Respond in ${languageName}. Provide information about Social Security offices.`,
+          content: `"You are Pat.io, a helpful and friendly AI assistant. Your tone should be courteous and respectful. Provide this response in ${languageName}, maintaining a friendly tone, but use the data exactly as provided."`,
         },
         { role: "user", content: prompt },
       ],
@@ -211,17 +213,15 @@ async function getChatCompletion(
 
     console.log("Prompt:Step 1", prompt);
     const chatCompletion = await openAIClient.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "ft:gpt-4o-mini-2024-07-18:personal:patio-v2:AHJSlWe4",
       messages: [
         {
           role: "system",
-          content: `You are an AI assistant, your tone should be courteous, friendly, and welcoming, and you must respond in ${languageName}. If the user is asking for ${
+          content: `"You are Pat.io, a helpful and friendly AI assistant. Your tone should be courteous and respectful. Your primary function is to provide information related to Social Security Numbers (SSN), Individual Taxpayer Identification Numbers (ITIN), and New York City Local Law 30. You may respond to greetings such as 'Hi' or 'Hello' in a friendly manner. However, for all other questions, you must only provide answers based on the data provided during fine-tuning and within the scope of SSN, ITIN, or Local Law 30. If a user asks a question outside this domain, politely decline by saying, 'I can only answer questions related to Social Security Numbers, ITIN, or New York City Local Law 30. Please ask a question in this domain.' Always end your reply with 'How can Pat.io assist you further?' Also, remove all * from the response.", And maintaining your tone in ${languageName}. If the user is asking for ${
             userInteractions.buttonClicks.visa_type
-          }, response back with the follow as a list: ${documentsNeeded
+          }, response back with the follow as a number list: ${documentsNeeded
             .map((doc) => `${doc.name}: ${doc.description}`)
-            .join(
-              ", "
-            )}. Otherwise answer freely, maintaining your tone in ${languageName}.`,
+            .join(", ")}.`,
         },
         { role: "user", content: prompt || userMessage },
       ],
@@ -350,6 +350,7 @@ Please feel free to reach out if you need more information.`;
     const aiResponse = await getLocationBasedCompletion(prompt, targetLanguage);
 
     // 5. Send the response to the client
+    console.log("AI Response:", aiResponse);
     res.json({
       textResponse: aiResponse,
     });
