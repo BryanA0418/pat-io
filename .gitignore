@@ -2,6 +2,7 @@
 node_modules
 .DS_Store
 config/*.json
+fifth-composite-437621-j7-e618895c37c1.json
 
 # Comment out for demo
 # .env
