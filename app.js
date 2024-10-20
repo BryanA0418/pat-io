@@ -168,7 +168,7 @@ async function getLocationBasedCompletion(prompt, userLanguage) {
 
     // Call OpenAI API to get the chat completion based on the prompt
     const chatCompletion = await openAIClient.chat.completions.create({
-      model: "ft:gpt-4o-mini-2024-07-18:personal:patio-v2:AHJSlWe4",
+      model: "ft:gpt-4o-mini-2024-07-18:personal:patio-v4:AKT8xi0C",
       messages: [
         {
           role: "system",
