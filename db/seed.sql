@@ -4,13 +4,50 @@
 -- Insert visa statuses
 INSERT INTO visa_status (name, description, qualify_for_ssn, government_document_required)
 VALUES 
-('H-1B', 'a temporary non-immigrant visa that allows US employers to hire foreign workers for specialty occupations', true, true),
-('L-1', 'a non-immigrant visa that allows multinational companies to transfer employees to their US offices', true, true),
-('TN', 'a non-immigrant visa that allows citizens of Canada and Mexico to work in the US for up to three years', true, true),
-('O-1', 'a non-immigrant visa that allows individuals with extraordinary ability in the sciences, arts, education, business, or athletics to work in the US', true, true),
-('E-2', 'a non-immigrant visa that allows investors to start a business in the US', true, true),
-('E-3', 'a non-immigrant visa that allows citizens of Australia to work in the US', true, true),
-('F-1', 'a non-immigrant visa that allows students to study in the US', true, true);
+('CW-1', 'CNMI-Only transitional worker', true, true),
+('CW-2', 'Dependents of CW-1 visa holders', false, true),
+('E-1', 'Treaty traders and qualified employees', true, true),
+('E-1S', 'Dependents of E-1 visa holders', false, true),
+('E-2', 'Treaty investors and qualified employees', true, true),
+('E-2S', 'Dependents of E-2 visa holders', false, true),
+('E-2C', 'Long-term foreign investors in the CNMI', true, true),
+('E-2CS', 'Dependents of E-2C visa holders', false, true),
+('E-3', 'Certain "specialty occupation" professionals from Australia', true, true),
+('E-3S', 'Dependents of E-3 visa holders', false, true),
+('H-1B', 'Workers in a specialty occupation', true, true),
+('H-1B1', 'Free Trade Agreement workers in a specialty occupation from Chile and Singapore', true, true),
+('H-1B2', 'Specialty occupations related to DoD Cooperative Research projects', true, true),
+('H-1B3', 'Fashion models of distinguished merit and ability', true, true),
+('H-4', 'Dependents of H-1B, H-2A, H-2B, and H-3 visa holders', true, true),
+('H-1C2', 'Registered nurses in health professional shortage areas', true, true),
+('H-2A', 'Temporary or seasonal agricultural workers', true, true),
+('H-2B', 'Temporary non-agricultural workers', true, true),
+('H-3', 'Trainees, including for educating handicapped children', true, true),
+('I', 'Representatives of foreign press, radio, or other foreign information media', true, true),
+('L-1A', 'Intracompany transferees in managerial or executive positions', true, true),
+('L-1B', 'Intracompany transferees with specialized knowledge', true, true),
+('L-2', 'Dependents of L-1 visa holders', true, true),
+('O-1', 'Persons with extraordinary ability in sciences, arts, business, athletics, or TV production', true, true),
+('O-2', 'Persons accompanying O-1 visa holders', true, true),
+('O-3', 'Dependents of O-1 and O-2 visa holders', false, true),
+('P-1A', 'Internationally recognized athletes', true, true),
+('P-1B', 'Internationally recognized entertainers', true, true),
+('P-2', 'Performers under reciprocal exchange programs', true, true),
+('P-3', 'Artists/entertainers performing under culturally unique programs', true, true),
+('P-4', 'Dependents of P visa holders', false, true),
+('Q-1', 'Persons in international cultural exchange programs', true, true),
+('R-1', 'Religious workers', true, true),
+('R-2', 'Dependents of R-1 visa holders', false, true),
+('TN', 'NAFTA professionals from Mexico and Canada', true, true),
+('TD', 'Dependents of TN visa holders', false, true),
+('F-1', 'Non-immigrant visa that allows students to study in the US and may qualify for an SSN if authorized for employment', true, true),
+('F-2', 'Dependents of F-1 visa holders', false, true),
+('F-3', 'Border commuter students from Canada or Mexico', false, true),
+('M-1', 'Non-immigrant visa for vocational or technical students', true, true),
+('M-2', 'Dependents of M-1 visa holders', false, true),
+('M-3', 'Border commuter vocational students from Canada or Mexico', false, true),
+('J-1', 'Non-immigrant visa for exchange visitors (students, researchers, and interns), may qualify for SSN if authorized for employment', true, true),
+('J-2', 'Dependents of J-1 visa holders', false, true);
 
 -- Insert ID requirements
 INSERT INTO id_requirements (name, form_number, description)
@@ -21,57 +58,119 @@ VALUES
 ('Birth Certificate', NULL, 'a document issued by a government that records the birth of an individual'),
 ('Passport Card', NULL, 'a document issued by the US Department of Homeland Security that allows individuals to travel internationally'),
 ('Employment Authorization Document', 'I-766', 'a document issued by the US Citizenship and Immigration Services that allows individuals to work in the US'),
+('Notice of Action', 'I-797', 'a document issued by the US Citizenship and Immigration Services that notifies individuals of a decision on their application'),
 ('Arrival-Departure Record', 'I-94', 'a document issued by the US Customs and Border Protection that records an individual''s arrival and departure from the US'),
 ('Certificate of Eligibility for Non-immigrant Student Status', 'I-20', 'a document issued by a US educational institution that allows international students to study in the US'),
-('Certificate of Eligibility for Non-immigrant Worker', 'I-129', 'a document issued by the US Citizenship and Immigration Services that allows individuals to work in the US'),
-('Optional Practical Training Certificate', 'I-765', 'a document issued by the US Citizenship and Immigration Services that allows individuals to work in the US');
+('Certificate of Eligibility for Non-immigrant Worker', 'I-129', 'A petition filed by an employer to hire a foreign worker'),
+('Optional Practical Training Certificate', 'I-765', 'a document issued by the US Citizenship and Immigration Services that allows individuals to work in the US'),
+('DS-2019', 'DS-2019', 'Certificate of Eligibility for Exchange Visitor Status, used for J-1 visa holders'),
+('Social Security Card', NULL, 'Document issued by the Social Security Administration, often required for employment'),
+('State ID', NULL, 'Non-driver identification card issued by a state government'),
+('I-551 Stamp', NULL, 'Temporary proof of permanent resident status, often placed in a foreign passport'),
+('Visa Stamp', NULL, 'Endorsement placed in a passport that allows the bearer to apply for entry into the issuing country'),
+('Notice of Action with I-94', 'I-797A', 'USCIS approval notice that includes an I-94 at the bottom, used for change of status or extension of stay'),
+('Immigrant Petition', 'I-140', 'A petition filed by an employer on behalf of a foreign worker to request permanent residency for the worker'),
+('Change of Status', 'I-485', 'A petition filed by an individual to change their status in the US, such as from a student to a worker'),
+('Change of Status', 'I-539', 'A petition filed by an individual to extend or change their non-immigrant status.'),
+('Online Non-immigrant Visa Application', 'DS-160', 'An online application for a non-immigrant visa');
+
 
 -- Insert visa requirements (many-to-many relationships)
 -- H-1B Visa Requirements
 INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
 VALUES 
-(1, 1), -- H-1B requires Passport
-(1, 7), -- H-1B requires Arrival-Departure Record (I-94)
-(1, 6); -- H-1B requires Employment Authorization Document for Non-immigrant Worker (I-766)
+(11, 1), -- H-1B requires Passport
+(11, 8), -- H-1B requires Arrival-Departure Record (I-94)
+(11, 6); -- H-1B requires Employment Authorization Document (I-766)
 
--- L-1 Visa Requirements
+-- L-1A Visa Requirements
 INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
 VALUES 
-(2, 1), -- L-1 requires Passport
-(2, 7), -- L-1 requires Arrival-Departure Record (I-94)
-(2, 9); -- L-1 requires Certificate of Eligibility for Non-immigrant Worker (I-129)
+(21, 1), -- L-1A requires Passport
+(21, 8), -- L-1A requires Arrival-Departure Record (I-94)
+(21, 10); -- L-1A requires Certificate of Eligibility for Non-immigrant Worker (I-129)
+
+-- L-1B Visa Requirements
+INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
+VALUES
+(22, 1), -- L-1B requires Passport
+(22, 8); -- L-1B requires Arrival-Departure Record (I-94)
 
 -- TN Visa Requirements
 INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
 VALUES 
-(3, 1), -- TN requires Passport
-(3, 7); -- TN requires Arrival-Departure Record (I-94)
+(35, 1), -- TN requires Passport
+(35, 8); -- TN requires Arrival-Departure Record (I-94)
 
 -- O-1 Visa Requirements
 INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
 VALUES 
-(4, 1), -- O-1 requires Passport
-(4, 7), -- O-1 requires Arrival-Departure Record (I-94)
-(4, 9); -- O-1 requires Certificate of Eligibility for Non-immigrant Worker (I-129)
+(25, 1), -- O-1 requires Passport
+(25, 8), -- O-1 requires Arrival-Departure Record (I-94)
+(25, 10); -- O-1 requires Certificate of Eligibility for Non-immigrant Worker (I-129)
 
 -- E-2 Visa Requirements
 INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
 VALUES 
 (5, 1), -- E-2 requires Passport
-(5, 7); -- E-2 requires Arrival-Departure Record (I-94)
+(5, 8); -- E-2 requires Arrival-Departure Record (I-94)
 
 -- E-3 Visa Requirements
 INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
 VALUES 
-(6, 1), -- E-3 requires Passport
-(6, 7); -- E-3 requires Arrival-Departure Record (I-94)
+(9, 1), -- E-3 requires Passport
+(9, 8); -- E-3 requires Arrival-Departure Record (I-94)
 
 -- F-1 Visa Requirements
 INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
 VALUES 
-(7, 1), -- F-1 requires Passport
-(7, 8), -- F-1 requires Certificate of Eligibility for Non-immigrant Student Status (I-20)
-(7, 10); -- F-1 requires Optional Practical Training Certificate (I-765)
+(36, 1), -- F-1 requires Passport
+(36, 9), -- F-1 requires Certificate of Eligibility for Non-immigrant Student Status (I-20)
+(36, 11); -- F-1 requires Optional Practical Training Certificate (I-765)
+
+-- J-1 Visa Requirements
+INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
+VALUES 
+(41, 1), -- J-1 requires Passport
+(41, 8), -- J-1 requires Arrival-Departure Record (I-94)
+(41, 12); -- J-1 requires DS-2019
+
+-- M-1 Visa Requirements
+INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
+VALUES 
+(39, 1), -- M-1 requires Passport
+(39, 8), -- M-1 requires Arrival-Departure Record (I-94)
+(39, 9); -- M-1 requires Certificate of Eligibility for Non-immigrant Student Status (I-20)
+
+-- R-1 Visa Requirements
+INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
+VALUES 
+(34, 1), -- R-1 requires Passport
+(34, 8), -- R-1 requires Arrival-Departure Record (I-94)
+(34, 10); -- R-1 requires Certificate of Eligibility for Non-immigrant Worker (I-129)
+
+-- P-1A Visa Requirements
+INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
+VALUES 
+(27, 1), -- P-1A requires Passport
+(27, 8), -- P-1A requires Arrival-Departure Record (I-94)
+(27, 10); -- P-1A requires Certificate of Eligibility for Non-immigrant Worker (I-129)
+
+-- H-2A Visa Requirements
+INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
+VALUES 
+(16, 1), -- H-2A requires Passport
+(16, 8), -- H-2A requires Arrival-Departure Record (I-94)
+(16, 10); -- H-2A requires Certificate of Eligibility for Non-immigrant Worker (I-129)
+
+-- P-1B Visa Requirements
+INSERT INTO visa_requirements (visa_status_id, id_requirements_id)
+VALUES 
+(28, 1), -- P-1B requires Passport
+(28, 8), -- P-1B requires Arrival-Departure Record (I-94)
+(28, 10); -- P-1B requires Certificate of Eligibility for Non-immigrant Worker (I-129)
+
+
 
 -- NY SSA Office Open/Close Times
 INSERT INTO office_open_close_times (
